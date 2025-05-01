@@ -178,7 +178,7 @@ p <- ggplot(average_mut_num_summary_sigC, aes(x = decile, y = average_enrichment
   geom_line(size=2) +
   geom_point(size=2, colour="black") +
   scale_color_manual(values = cols) +
-  geom_errorbar(aes(ymin = average_enrichment-sd_enrichment, ymax = average_enrichment+sd_enrichment), width = 0.2) +
+  geom_errorbar(aes(ymin = ifelse(average_enrichment-sd_enrichment < 0, 0, average_enrichment-sd_enrichment), ymax = average_enrichment+sd_enrichment), width = 0.2) +
   theme_classic() +
   ylim(c(-5.5, 7.5)) +
   scale_y_continuous(breaks=seq(-5,7,1))

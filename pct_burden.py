@@ -70,6 +70,24 @@ def quant_snv():
 	plt.show()
 
 
+def indel_mapd():
+
+	burden_in = '/home/boj924/AD_Tau_PTA/results/tau_AD_ctrl_res.tab'
+	burden = pd.read_csv(burden_in, sep=',', header=0,index_col=0)
+	burden = burden.loc[(burden['mutation_type']=='indel') & (burden.index!='1995P_201001E3'),]
+	burden.dropna(inplace=True)
+
+	mapd_in = '/home/boj924/AD_Tau_PTA/results/mapd.list'
+	mapd = pd.read_csv(mapd_in, sep=',', header=0, index_col=0)
+	burden_mapd =pd.merge(burden, mapd, left_index=True, right_index=True)
+	fig, ax = plt.subplots()
+	ax.scatter(x=burden_mapd['burden'], y=burden_mapd['MAPD'])
+	ax.set_xlabel('sIndel burden')
+	ax.set_ylabel('MAPD')
+	plt.show()
+
+
+
 def scale_indel():
 	
 	tbp_count = '/home/boj924/AD_Tau_PTA/results/indel_spectrum_count.tab'
@@ -120,7 +138,7 @@ def scale_indel():
 	metafile = pd.read_csv(metafile_in, header=0,dtype=str)
 	clinic = pd.read_csv(clinic_in, header=0, sep='\t',dtype=str)
 	metafile = pd.merge(metafile,clinic, left_on='donor',right_on='Case_ID')
-	metafile['Age'] = metafile['Age_(yrs)'].astype(float)
+	metafile['Age'] = metafile['Age'].astype(float)
 
 	AT8pct = pd.read_csv(AT8pct_in,header=0)
 	AT8pct['Case_ID'] = AT8pct['ADRCID'].astype(str)
@@ -131,19 +149,39 @@ def scale_indel():
 
 #	var = 'burden'
 	var = 'twobp_burden'
-	var = 'ID4'
-	var = 'ID22'
+#	var = 'ID4'
+#	var = 'ID22'
 
 	df_tau = df.loc[df['group'].isin(['noTau','Tau','AD'])]
 	df_tau['ID4'].fillna(0,inplace=True)
 	df_tau['ID22'].fillna(0,inplace=True)
 	df_tau = pd.merge(df_tau, depth_profile, right_index=True, left_on='sample')
 
+#	md = smf.mixedlm(" %s ~ Age + IHC_neuron_pos_percent"%var, df_tau, groups=df_tau["Case_ID"])
+#	mdf = md.fit()
+#	rescale_results = mdf.summary().tables[1]
+#	rescale_results['Coef.'] = rescale_results['Coef.'].astype(float)
+#	print(rescale_results)
+
+
 	md = smf.mixedlm(" %s ~ Age + IHC_neuron_pos_percent + C(group, Treatment('noTau')) "%var, df_tau, groups=df_tau["Case_ID"])
 	mdf = md.fit()
 	rescale_results = mdf.summary().tables[1]
 	rescale_results['Coef.'] = rescale_results['Coef.'].astype(float)
 	print(rescale_results)
+	return 0
+
+	for igrp, grp in df_tau.groupby('group'):
+		md_temp = smf.mixedlm(" %s ~ Age + IHC_neuron_pos_percent"%var, grp, groups=grp["Case_ID"])
+		mdf_temp = md_temp.fit()
+		rescale_results_temp = mdf_temp.summary().tables[1]
+		rescale_results_temp['Coef.'] = rescale_results_temp['Coef.'].astype(float)
+
+	md = smf.mixedlm(" %s ~ Age + IHC_neuron_pos_percent * C(group, Treatment('noTau')) "%var, df_tau, groups=df_tau["Case_ID"])
+	mdf = md.fit()
+	rescale_results = mdf.summary().tables[1]
+	rescale_results['Coef.'] = rescale_results['Coef.'].astype(float)
+	return 0
 
 	rescale_var = var+'_rescale'
 	df_tau[rescale_var] = df_tau[var] - (df_tau['Age'] * rescale_results.loc['Age','Coef.'] + rescale_results.loc['Intercept','Coef.'])
@@ -151,21 +189,21 @@ def scale_indel():
 	color_palette= { 'AD': 'tab:orange', 'ctrl': 'tab:blue', 'Tau':'tab:red', 'noTau':'tab:pink' }	
 	fig,ax = plt.subplots(constrained_layout=True,figsize=(3,4))
 	g=sns.lmplot(x="IHC_neuron_pos_percent", y=rescale_var, data=df_tau, hue='group', 
-			legend=False,palette=color_palette)
+			legend=False, palette=color_palette, height=4, aspect=1.5)
 	g.set(xlim=(0,30))
 	g.set(ylim=(-1000, 6000))
 	plt.savefig(out_name+'_'+var+'_combine.pdf', dpi=300,  bbox_inches='tight')
 	plt.close()
 
-	label = { 'AD': 'AD', 'ctrl': 'Control', 'Tau':'P-tau+', 'noTau':'P-tau-' }
-	color_palette2 = { 0:'black', 1: 'white'}
-
-	fig,ax = plt.subplots(constrained_layout=True,figsize=(5,4), frameon = False)	
-	g=sns.lmplot(x="IHC_neuron_pos_percent", y=rescale_var, data=df_tau, \
-			col='group',hue='group',palette=color_palette)
-	g.set(xlim=(0,30))
-	g.set(ylim=(-1000, 6000))
-	plt.savefig(out_name+'_'+var+'_ind.pdf', dpi=300,  bbox_inches='tight')
+#	label = { 'AD': 'AD', 'ctrl': 'Control', 'Tau':'P-tau+', 'noTau':'P-tau-' }
+#	color_palette2 = { 0:'black', 1: 'white'}
+#
+#	fig,ax = plt.subplots(constrained_layout=True,figsize=(5,4), frameon = False)	
+#	g=sns.lmplot(x="IHC_neuron_pos_percent", y=rescale_var, data=df_tau, \
+#			col='group',hue='group',palette=color_palette)
+#	g.set(xlim=(0,30))
+#	g.set(ylim=(-1000, 6000))
+#	plt.savefig(out_name+'_'+var+'_ind.pdf', dpi=300,  bbox_inches='tight')
 	
 def quant_indel():
 	
@@ -254,7 +292,8 @@ def quant_indel():
 
 if __name__ == "__main__":
 #	scale_indel()
-	quant_indel()
+	indel_mapd()
+#	quant_indel()
 #	quant_snv()
 
 

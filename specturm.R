@@ -97,6 +97,7 @@ plot_snv_profile <- function(mut_matrix, colors = NA) {
     scale_fill_manual(values = colors) +
     facet_grid(sample ~ substitution) +
     ylab("Percentage") +
+    ylim(0,0.1) +
 #    ylab("Absolute burden") +
     guides(fill = FALSE) +
     theme_bw() +

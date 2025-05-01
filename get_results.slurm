@@ -77,13 +77,23 @@ cat $miller/AD_Tau/results_hg19/annovar/indel_list.annovar.hg19_multianno.txt \
 	$miller/ctrl_hg19/annovar/indel_list.annovar.hg19_multianno.txt \
 	$miller/AD_hg19/annovar/indel_list.annovar.hg19_multianno.txt > ~/all_indel_list.annovar.hg19_multianno
 
+cat $miller/AD_Tau/results_hg19/annovar/snv_list.annovar.exonic_variant_function \
+	$miller/ctrl_hg19/annovar/snv_list.annovar.exonic_variant_function \
+	$miller/AD_hg19/annovar/snv_list.annovar.exonic_variant_function > ~/all_snv_list.annovar.exonic_variant_function
 
 cat $miller/AD_Tau/results_hg19/annovar/indel_list.annovar.exonic_variant_function \
 	$miller/ctrl_hg19/annovar/indel_list.annovar.exonic_variant_function \
 	$miller/AD_hg19/annovar/indel_list.annovar.exonic_variant_function > ~/all_indel_list.annovar.exonic_variant_function
 
+cat $miller/AD_Tau/results_hg19/snv_list.combined.txt \
+	$miller/ctrl_hg19/snv_list.combined.txt \
+	$miller/AD_hg19/snv_list.combined.txt > /home/boj924/AD_Tau_PTA/all_snv_list.combined.txt
 
- 
+cat $miller/AD_Tau/results_hg19/indel_list.combined.txt \
+	$miller/ctrl_hg19/indel_list.combined.txt \
+	$miller/AD_hg19/indel_list.combined.txt > /home/boj924/AD_Tau_PTA/all_indel_list.combined.txt
+
+
 ###t2t
 #dir=/n/data1/bwh/pathology/miller/lab/AD_Tau_PTA/results_T2T
 #outdir=/home/boj924/AD_Tau_PTA/results/t2t_AD_neurons

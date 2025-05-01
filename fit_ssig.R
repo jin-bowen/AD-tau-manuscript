@@ -25,6 +25,7 @@ colnames(nmf_res$signatures) <- c("Signature_METACS_S1","Signature_METACS_S2")
 rownames(nmf_res$contribution) <- c("Signature_METACS_S1","Signature_METACS_S2")
 saveRDS(nmf_res, "/home/boj924/Tn5-duplex-calling/results/nmf_res.S1S2.rds")
 
+nmf_res=readRDS("/home/boj924/Tn5-duplex-calling/results/nmf_res.S1S2.rds")
 S1S2 <- nmf_res$signatures
 S1S2_contribution <- nmf_res$contribution
 #normalize by signature (96 fractions for each signature sum up to 1)
@@ -98,6 +99,9 @@ meta_clinic_percent_melt <- melt(meta_clinic_burden[c('Cell_ID','class','donor',
 meta_clinic_percent_melt_sort =  meta_clinic_percent_melt[order(meta_clinic_percent_melt$class, meta_clinic_percent_melt$Age, meta_clinic_percent_melt$group), ]
 meta_clinic_percent_melt_sort$Cell_ID = fct_inorder(meta_clinic_percent_melt_sort$Cell_ID)
 
+write.csv(meta_clinic_melt,'/home/boj924/AD_Tau_PTA/results/All_ss_abs.csv', quote=F)
+write.csv(meta_clinic_percent_melt,'/home/boj924/AD_Tau_PTA/results/All_ss_percent.csv', quote=F)
+
 p=ggplot(meta_clinic_melt_sort, aes(fill=variable, y=value, x=Cell_ID)) +
     geom_bar(position="stack", stat="identity") +
     ylim(0, 3000) +
@@ -107,13 +111,23 @@ ggsave(paste0("/home/boj924/AD_Tau_PTA/results/all_ds_ss_snv-AD",".pdf"), plot =
 
 p=ggplot(meta_clinic_percent_melt_sort, aes(fill=variable, y=value, x=Cell_ID)) +
     geom_bar(position="stack", stat="identity") + 
-    ylim(0, 1) +
+    ylim(0, 1.1) +
     scale_fill_manual(values=c("#9999CC", "#66CC99"))+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ggsave(paste0("/home/boj924/AD_Tau_PTA/results/all_ds_ss_snv-AD_percent",".pdf"), plot = p, width = 16, height = 4, dpi = 300)
 
 p=plot_snv_profile(S1S2)
 ggsave(paste0("/home/boj924/AD_Tau_PTA/results/","ds_ss_snv-AD_spectrum",".pdf"), plot = p, width = 8, height = 6, dpi = 300)
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -10,8 +10,8 @@ source('/home/boj924/AD_Tau_PTA/analysis_scripts/specturm.R')
 
 #### Fit SCAN2 calls to META-CS ds/ssIndel signatures ####
 # Get original ds/ss signatures
-nmf_res.ds <- readRDS("/home/boj924/Tn5-duplex-calling/results/tlpk_indel_ds_sig_ctrl.rds")
-nmf_res.ss <- readRDS("/home/boj924/Tn5-duplex-calling/results/tlpk_indel_ss_sig_ctrl.rds")
+nmf_res.ds <- readRDS("/home/boj924/Tn5-duplex-calling/results/tlpk_indel_ds_sig_AD.rds")
+nmf_res.ss <- readRDS("/home/boj924/Tn5-duplex-calling/results/tlpk_indel_ss_sig_AD.rds")
 metacs_signatures <- as.data.frame(cbind(nmf_res.ds, nmf_res.ss))
 names(metacs_signatures) <- c("Signature_dsIndel_filtered", "Signature_ssIndel_filtered")
 #normalize by signature (96 fractions for each signature sum up to 1)
@@ -22,10 +22,10 @@ r<-2
 nmf_res <- extract_signatures(metacs_signatures, rank = r, single_core = T)
 colnames(nmf_res$signatures) <- c("Signature_METACS_S1","Signature_METACS_S2")
 rownames(nmf_res$contribution) <- c("Signature_METACS_S1","Signature_METACS_S2")
-saveRDS(nmf_res, "/home/boj924/Tn5-duplex-calling/results/nmf_indel_ctrl.S1S2.rds")
+saveRDS(nmf_res, "/home/boj924/Tn5-duplex-calling/results/nmf_indel_AD.S1S2.rds")
 
 
-nmf_res=readRDS("/home/boj924/Tn5-duplex-calling/results/nmf_indel_ctrl.S1S2.rds")
+nmf_res=readRDS("/home/boj924/Tn5-duplex-calling/results/nmf_indel_AD.S1S2.rds")
 S1S2 <- nmf_res$signatures
 S1S2_contribution <- nmf_res$contribution
 #normalize by signature (96 fractions for each signature sum up to 1)
@@ -50,6 +50,6 @@ p=ggplot(df, aes(x = sig1, y = sig2, fill = Value)) +
        x = "X-axis",
        y = "Y-axis",
        fill = "Value")
-ggsave(paste0("/home/boj924/AD_Tau_PTA/results/ss_indel_ctrl_musical",".pdf"), plot = p, width = 12, height = 4, dpi = 300)
+ggsave(paste0("/home/boj924/AD_Tau_PTA/results/ss_indel_AD_musical",".pdf"), plot = p, width = 12, height = 4, dpi = 300)
 
 

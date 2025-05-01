@@ -94,9 +94,12 @@ meta_clinic_percent_melt <- melt(meta_clinic_burden[c('Cell_ID','class','donor',
 meta_clinic_percent_melt_sort =  meta_clinic_percent_melt[order(meta_clinic_percent_melt$class, meta_clinic_percent_melt$Age, meta_clinic_percent_melt$group), ]
 meta_clinic_percent_melt_sort$Cell_ID = fct_inorder(meta_clinic_percent_melt_sort$Cell_ID)
 
+write.csv(meta_clinic_melt,'/home/boj924/AD_Tau_PTA/results/All_ss_indel_abs.csv', quote=F)
+write.csv(meta_clinic_percent_melt,'/home/boj924/AD_Tau_PTA/results/All_ss_indel_percent.csv', quote=F)
+
 p=ggplot(meta_clinic_melt_sort, aes(fill=variable, y=value, x=Cell_ID)) + 
     geom_bar(position="stack", stat="identity") +
-    ylim(0, 3000) +
+    ylim(0, 8000) +
     scale_fill_manual(values=c("#9999CC", "#66CC99"))+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ggsave(paste0("/home/boj924/AD_Tau_PTA/results/all_ds_ss_indel-AD",".pdf"), plot = p, width = 16, height = 4, dpi = 300)
